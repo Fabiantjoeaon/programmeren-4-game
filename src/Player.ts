@@ -8,6 +8,7 @@ import {
     Engine
 } from "matter-js";
 import MatterInstance from "./MatterInstance";
+import Game from "./Game";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 enum Direction {
@@ -24,15 +25,22 @@ export default class Player {
         y: getHeight() / 2 + 150
     };
     private aimAngle: number = 0;
+    private size: number = 30;
 
     constructor() {
         const { engine } = MatterInstance.getInstance();
         this.position = this.position;
-        this.body = Bodies.rectangle(this.position.x, this.position.y, 30, 30, {
-            render: {
-                fillStyle: "#fff"
+        this.body = Bodies.rectangle(
+            this.position.x,
+            this.position.y,
+            this.size,
+            this.size,
+            {
+                render: {
+                    fillStyle: "#fff"
+                }
             }
-        });
+        );
 
         World.add(engine.world, this.body);
 
@@ -74,51 +82,38 @@ export default class Player {
     }
 
     private handleWallCollision(e: IEventCollision<Engine>) {
-        const { bodyA } = e.pairs[0];
+        const { bodyA: collision, bodyB: player } = e.pairs[0];
         const { canvas } = MatterInstance.getInstance();
-        switch (bodyA.label) {
+
+        switch (collision.label) {
             case "topWall":
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
-                    y: canvas.height
-                });
-                this.move({
-                    x: this.body.force.x,
-                    y: (this.body.force.y *= -1)
+                    y: canvas.height - this.size
                 });
                 break;
+
             case "bottomWall":
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
-                    y: 0
-                });
-                this.move({
-                    x: this.body.force.x,
-                    y: (this.body.force.y *= -1)
+                    y: this.size
                 });
                 break;
+
             case "leftWall":
                 Body.setPosition(this.body, {
-                    x: canvas.width,
+                    x: canvas.width - this.size,
                     y: this.body.position.y
-                });
-                this.move({
-                    x: (this.body.force.x *= -1),
-                    y: this.body.force.y
                 });
                 break;
+
             case "rightWall":
                 Body.setPosition(this.body, {
-                    x: 0,
+                    x: this.size,
                     y: this.body.position.y
-                });
-                this.move({
-                    x: (this.body.force.x *= -1),
-                    y: this.body.force.y
                 });
                 break;
         }
-        //MatterInstance.getInstance().canvas.height
     }
 
     private move(force: Vector) {
