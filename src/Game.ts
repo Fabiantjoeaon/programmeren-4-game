@@ -1,11 +1,11 @@
-import Grid from "./Grid";
+import Scene from "./Scene";
 
 export default class Game {
     private static instance: Game;
-    private grid: Grid;
+    private scene: Scene;
 
     private constructor() {
-        this.grid = new Grid(4, 4);
+        this.scene = new Scene();
     }
 
     static getInstance() {

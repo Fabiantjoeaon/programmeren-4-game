@@ -1,12 +1,20 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
 
   <title>The HTML5 Herald</title>
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
 
   <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
 
@@ -15,7 +23,10 @@
 </head>
 <![endif]-->
 
-<body>
-  <script src="dist/bundle.js"></script>
-</body>
+  <body>
+    <canvas id="root">
+    </canvas>
+    <script src="dist/bundle.js"></script>
+  </body>
+
 </html>
