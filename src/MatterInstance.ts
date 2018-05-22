@@ -1,4 +1,5 @@
 import { Engine, Render } from "matter-js";
+import { getWidth, getHeight } from "../util/getDimensions";
 
 export default class MatterInstance {
     private static instance: MatterInstance;
@@ -14,34 +15,43 @@ export default class MatterInstance {
         this.canvasContext = this.canvas.getContext(
             "2d"
         ) as CanvasRenderingContext2D;
-
         this.engine = Engine.create();
         this.engine.world.gravity.y = 0;
-        Engine.run(this.engine);
 
         this.render = Render.create({
             canvas: this.canvas,
             engine: this.engine,
             options: {
-                wireframes: false,
-                background: "#000"
+                wireframes: false
+                //@ts-ignore
+                // background: "#000"
             }
         });
-        this.updateWindowDimensions(window.innerWidth, window.innerHeight);
+        this.updateWindowDimensions(getWidth(), getHeight());
 
+        Engine.run(this.engine);
         Render.run(this.render);
 
         window.addEventListener("resize", () => {
-            this.updateWindowDimensions(window.innerWidth, window.innerHeight);
+            this.updateWindowDimensions(getWidth(), getHeight());
         });
     }
 
-    private updateWindowDimensions(width: number, height: number) {
+    private updateWindowDimensions(width: number, height: number): void {
         this.render.canvas.width = width;
         this.render.canvas.height = height;
+        // @ts-ignore
+        // this.engine.world.bounds.min.x = 0;
+        // // @ts-ignore
+        // this.engine.world.bounds.max.x = width;
+        // // @ts-ignore
+        // this.engine.world.bounds.min.y = 0;
+        // // @ts-ignore
+        // this.engine.world.bounds.max.y = height;
+        console.log(this.engine);
     }
 
-    public static getInstance() {
+    public static getInstance(): MatterInstance {
         if (!MatterInstance.instance) {
             MatterInstance.instance = new MatterInstance();
         }
