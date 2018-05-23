@@ -9,6 +9,7 @@ import {
 } from "matter-js";
 import MatterInstance from "./MatterInstance";
 import Game from "./Game";
+import GameObject from "./GameObject";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 enum Direction {
@@ -18,8 +19,8 @@ enum Direction {
     Right = 68
 }
 
-export default class Player {
-    private body: Body;
+export default class Player implements GameObject {
+    public body: Body;
     private position: Vector = {
         x: getWidth() / 2,
         y: getHeight() / 2 + 150
@@ -48,6 +49,14 @@ export default class Player {
         Events.on(engine, "collisionStart", e => {
             this.handleWallCollision(e);
         });
+    }
+
+    public move(force: Vector) {
+        Body.applyForce(
+            this.body,
+            { x: this.position.x, y: this.position.y },
+            force
+        );
     }
 
     private handleControls() {
@@ -114,13 +123,5 @@ export default class Player {
                 });
                 break;
         }
-    }
-
-    private move(force: Vector) {
-        Body.applyForce(
-            this.body,
-            { x: this.position.x, y: this.position.y },
-            force
-        );
     }
 }

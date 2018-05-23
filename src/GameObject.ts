@@ -1,7 +1,7 @@
-export default class GameObject {
-    protected el: HTMLElement;
+import { Vector, Body } from "matter-js";
 
-    constructor() {
-        this.el = document.createElement("div");
-    }
+export default interface GameObject {
+    body: Body;
+
+    move(force: Vector): void;
 }
