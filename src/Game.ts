@@ -3,7 +3,7 @@ import Player from "./Player";
 
 export default class Game {
     private static instance: Game;
-    public scene: Scene;
+    private scene: Scene;
     private player: Player;
 
     private constructor() {

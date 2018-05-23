@@ -1,7 +1,23 @@
-import { Vector, Body } from "matter-js";
+import { Vector, Body, World } from "matter-js";
+import MatterInstance from "./MatterInstance";
 
-export default interface GameObject {
-    body: Body;
+export default class GameObject {
+    protected body: Body;
 
-    move(force: Vector): void;
+    constructor() {}
+
+    create(body: Body) {
+        const { engine } = MatterInstance.getInstance();
+        this.body = body;
+
+        World.add(engine.world, body);
+    }
+
+    protected move(force: Vector) {
+        Body.applyForce(
+            this.body,
+            { x: this.body.position.x, y: this.body.position.y },
+            force
+        );
+    }
 }

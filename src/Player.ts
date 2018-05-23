@@ -20,7 +20,7 @@ enum Direction {
     Right = 68
 }
 
-export default class Player implements GameObject {
+export default class Player extends GameObject {
     public body: Body;
     private startingPosition: Vector = {
         x: getWidth() / 2,
@@ -33,20 +33,21 @@ export default class Player implements GameObject {
     private blaster: Blaster;
 
     constructor() {
+        super();
         const { engine } = MatterInstance.getInstance();
-        this.body = Bodies.rectangle(
-            this.startingPosition.x,
-            this.startingPosition.y,
-            this.size,
-            this.size,
-            {
-                render: {
-                    fillStyle: "#fff"
+        this.create(
+            Bodies.rectangle(
+                this.startingPosition.x,
+                this.startingPosition.y,
+                this.size,
+                this.size,
+                {
+                    render: {
+                        fillStyle: "#fff"
+                    }
                 }
-            }
+            )
         );
-
-        World.add(engine.world, this.body);
 
         this.handleControls();
         Events.on(engine, "collisionStart", e => {
@@ -54,14 +55,6 @@ export default class Player implements GameObject {
         });
 
         this.blaster = new Blaster(this.body.position);
-    }
-
-    public move(force: Vector) {
-        Body.applyForce(
-            this.body,
-            { x: this.body.position.x, y: this.body.position.y },
-            force
-        );
     }
 
     private handleControls() {
