@@ -10,7 +10,7 @@ import {
 import MatterInstance from "./MatterInstance";
 import Game from "./Game";
 import GameObject from "./GameObject";
-import { Blaster } from "./Weapons";
+import { Blaster, WeaponStrategy } from "./Weapons";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 enum Direction {
@@ -22,21 +22,21 @@ enum Direction {
 
 export default class Player implements GameObject {
     public body: Body;
-    private position: Vector = {
+    private startingPosition: Vector = {
         x: getWidth() / 2,
         y: getHeight() / 2 + 150
     };
     private aimAngle: number = 0;
     private size: number = 30;
-    // hm?
-    // private weapon: WeaponStrategy
+
+    private activeWeapon: WeaponStrategy;
+    private blaster: Blaster;
 
     constructor() {
         const { engine } = MatterInstance.getInstance();
-        this.position = this.position;
         this.body = Bodies.rectangle(
-            this.position.x,
-            this.position.y,
+            this.startingPosition.x,
+            this.startingPosition.y,
             this.size,
             this.size,
             {
@@ -52,12 +52,14 @@ export default class Player implements GameObject {
         Events.on(engine, "collisionStart", e => {
             this.handleWallCollision(e);
         });
+
+        this.blaster = new Blaster(this.body.position);
     }
 
     public move(force: Vector) {
         Body.applyForce(
             this.body,
-            { x: this.position.x, y: this.position.y },
+            { x: this.body.position.x, y: this.body.position.y },
             force
         );
     }

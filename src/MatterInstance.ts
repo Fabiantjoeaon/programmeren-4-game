@@ -40,15 +40,6 @@ export default class MatterInstance {
     private updateWindowDimensions(width: number, height: number): void {
         this.render.canvas.width = width;
         this.render.canvas.height = height;
-        // @ts-ignore
-        // this.engine.world.bounds.min.x = 0;
-        // // @ts-ignore
-        // this.engine.world.bounds.max.x = width;
-        // // @ts-ignore
-        // this.engine.world.bounds.min.y = 0;
-        // // @ts-ignore
-        // this.engine.world.bounds.max.y = height;
-        console.log(this.engine);
     }
 
     public static getInstance(): MatterInstance {

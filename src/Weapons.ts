@@ -29,4 +29,6 @@ export class Blaster extends WeaponStrategy {
     constructor(playerPosition: Vector) {
         super(playerPosition);
     }
+
+    protected fire(): void {}
 }
