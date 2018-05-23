@@ -10,6 +10,7 @@ import {
 import MatterInstance from "./MatterInstance";
 import Game from "./Game";
 import GameObject from "./GameObject";
+import { Blaster } from "./Weapons";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 enum Direction {
@@ -27,6 +28,8 @@ export default class Player implements GameObject {
     };
     private aimAngle: number = 0;
     private size: number = 30;
+    // hm?
+    // private weapon: WeaponStrategy
 
     constructor() {
         const { engine } = MatterInstance.getInstance();
@@ -98,14 +101,14 @@ export default class Player implements GameObject {
             case "topWall":
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
-                    y: canvas.height - this.size
+                    y: canvas.height - (this.size - 20)
                 });
                 break;
 
             case "bottomWall":
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
-                    y: this.size
+                    y: this.size + 20
                 });
                 break;
 
