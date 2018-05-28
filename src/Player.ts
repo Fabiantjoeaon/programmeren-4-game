@@ -5,12 +5,14 @@ import {
     Vector,
     Events,
     IEventCollision,
-    Engine
+    Engine,
+    Composite
 } from "matter-js";
 import MatterInstance from "./MatterInstance";
 import Game from "./Game";
 import GameObject from "./GameObject";
-import { Blaster, WeaponStrategy } from "./Weapons";
+import WeaponStrategy, { Blaster } from "./Weapons";
+import Projectile from "./Projectile";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 enum Direction {
@@ -20,11 +22,20 @@ enum Direction {
     Right = 68
 }
 
+enum Action {
+    Fire = 38,
+    AimLeft = 37,
+    AimRight = 39
+}
+
 export default class Player extends GameObject {
-    public body: Body;
     private startingPosition: Vector = {
         x: getWidth() / 2,
         y: getHeight() / 2 + 150
+    };
+    public aimVector: Vector = {
+        x: 0,
+        y: 0
     };
     private aimAngle: number = 0;
     private size: number = 30;
@@ -49,43 +60,67 @@ export default class Player extends GameObject {
             )
         );
 
-        this.handleControls();
+        document.addEventListener("keydown", e => {
+            this.handleControls(e.keyCode);
+        });
         Events.on(engine, "collisionStart", e => {
             this.handleWallCollision(e);
         });
 
-        this.blaster = new Blaster(this.body.position);
+        this.blaster = new Blaster();
+        this.activeWeapon = this.blaster;
     }
 
-    private handleControls() {
-        document.addEventListener("keydown", e => {
-            switch (e.keyCode) {
-                case Direction.Up:
-                    this.move({
-                        x: 0,
-                        y: -0.004
-                    });
-                    break;
-                case Direction.Down:
-                    this.move({
-                        x: 0,
-                        y: 0.004
-                    });
-                    break;
-                case Direction.Left:
-                    this.move({
-                        x: -0.004,
-                        y: 0
-                    });
-                    break;
-                case Direction.Right:
-                    this.move({
-                        x: 0.004,
-                        y: 0
-                    });
-                    break;
-            }
-        });
+    private handleControls(keyCode: number): void {
+        // TODO: Abstract naar interface??
+        switch (keyCode) {
+            case Direction.Up:
+                this.move({
+                    x: 0,
+                    y: -0.004
+                });
+
+                break;
+            case Direction.Down:
+                this.move({
+                    x: 0,
+                    y: 0.004
+                });
+                break;
+            case Direction.Left:
+                this.move({
+                    x: -0.004,
+                    y: 0
+                });
+                break;
+            case Direction.Right:
+                this.move({
+                    x: 0.004,
+                    y: 0
+                });
+                break;
+
+            case Action.AimLeft:
+                this.rotateAim(1);
+                break;
+
+            case Action.AimRight:
+                this.rotateAim(10);
+                break;
+
+            case Action.Fire:
+                this.activeWeapon.fire();
+                break;
+        }
+    }
+
+    private rotateAim(angle: number) {
+        this.aimAngle = this.aimAngle + angle;
+        this.aimVector = Vector.rotateAbout(
+            this.aimVector,
+            this.aimAngle,
+            this.body.position
+        );
     }
 
     private handleWallCollision(e: IEventCollision<Engine>) {

@@ -23,7 +23,7 @@ export default class MatterInstance {
             engine: this.engine,
             options: {
                 wireframes: false
-                //@ts-ignore
+                // @ts-ignore
                 // background: "#000"
             }
         });
