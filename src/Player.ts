@@ -72,7 +72,6 @@ export default class Player extends GameObject {
     }
 
     private handleControls(keyCode: number): void {
-        // TODO: Abstract naar interface??
         switch (keyCode) {
             case Direction.Up:
                 this.move({
@@ -124,11 +123,12 @@ export default class Player extends GameObject {
     }
 
     private handleWallCollision(e: IEventCollision<Engine>) {
-        const { bodyA: collision, bodyB: player } = e.pairs[0];
+        const { bodyA: player, bodyB: collision } = e.pairs[0];
         const { canvas } = MatterInstance.getInstance();
 
         switch (collision.label) {
             case "topWall":
+                console.log("TOP")
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
                     y: canvas.height - (this.size - 20)
