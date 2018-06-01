@@ -20,6 +20,7 @@ export default class Projectile extends GameObject {
         this.size = size;
         this.create(
             Bodies.rectangle(x, y, 3, this.size, {
+                label: "projectile",
                 render: {
                     fillStyle: "#fff"
                 }
@@ -34,7 +35,7 @@ export default class Projectile extends GameObject {
     }
 
     private handleWallCollision(e: IEventCollision<Engine>) {
-        const { bodyA: collision, bodyB: player } = e.pairs[0];
+        const { bodyA: collision, bodyB: projectile } = e.pairs[0];
         const { canvas, engine } = MatterInstance.getInstance();
 
         switch (collision.label) {
@@ -56,7 +57,11 @@ export default class Projectile extends GameObject {
 
             case "enemy":
                 // TODO: observer pattern ??
-                Composite.remove(engine.world, collision);
+                if (projectile.label === "projectile") {
+                    Composite.remove(engine.world, collision);
+                    Game.getInstance().updateScore(1000);
+                }
+
                 break;
         }
     }

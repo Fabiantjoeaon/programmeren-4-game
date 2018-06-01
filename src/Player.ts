@@ -45,6 +45,7 @@ export default class Player extends GameObject {
                 this.size,
                 this.size,
                 {
+                    label: "player",
                     render: {
                         fillStyle: "#fff"
                     }
@@ -60,7 +61,7 @@ export default class Player extends GameObject {
             this.activeWeapon.fire({ x, y });
         });
         Events.on(engine, "collisionStart", e => {
-            this.handleWallCollision(e);
+            this.handleCollision(e);
         });
 
         this.activeWeapon = new Blaster(this);
@@ -96,7 +97,7 @@ export default class Player extends GameObject {
         }
     }
 
-    private handleWallCollision(e: IEventCollision<Engine>) {
+    private handleCollision(e: IEventCollision<Engine>) {
         const { bodyA: player, bodyB: collision } = e.pairs[0];
         const { canvas } = MatterInstance.getInstance();
         const offset = 40;
@@ -128,6 +129,10 @@ export default class Player extends GameObject {
                     x: this.size + offset,
                     y: this.body.position.y
                 });
+                break;
+
+            case "enemy":
+                if (player.label === "player") console.log("GAME OVER");
                 break;
         }
     }
