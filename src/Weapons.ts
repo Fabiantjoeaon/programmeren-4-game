@@ -8,7 +8,7 @@ export default interface WeaponStrategy {
 }
 
 export class Blaster implements WeaponStrategy {
-    private projectileSize: number = 50;
+    private projectileSize: number = 20;
     constructor() {}
 
     public fire(): void {

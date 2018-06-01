@@ -6,7 +6,7 @@ export default class GameObject {
 
     constructor() {}
 
-    create(body: Body) {
+    protected create(body: Body) {
         const { engine } = MatterInstance.getInstance();
         this.body = body;
 

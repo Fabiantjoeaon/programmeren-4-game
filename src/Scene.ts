@@ -96,15 +96,15 @@ export default class Scene {
         //https://stackoverflow.com/questions/35827012/matter-js-calculating-force-needed
         // const force =
 
-        // const dir = Vector.angle(
-        //     projectile.body.position,
-        //     this.player.aimVector
-        // );
+        const dir = Vector.angle(
+            projectile.body.position,
+            this.player.aimVector
+        );
 
-        // projectile.move({
-        //     x: Math.cos(dir) * 10,
-        //     y: Math.sin(dir) * 10
-        // });
+        projectile.move({
+            x: Math.cos(dir) / 100,
+            y: Math.sin(dir) / 100
+        });
         // projectile.move({
         //     x: 0.01,
         //     y: 0.03

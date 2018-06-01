@@ -9,9 +9,9 @@ export default class Projectile extends GameObject {
         super();
         this.size = size;
         this.create(
-            Bodies.rectangle(x, y, 1, this.size, {
+            Bodies.rectangle(x, y, 3, this.size, {
                 render: {
-                    fillStyle: "#ff0000"
+                    fillStyle: "#fff"
                 }
             })
         );

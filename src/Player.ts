@@ -13,6 +13,7 @@ import Game from "./Game";
 import GameObject from "./GameObject";
 import WeaponStrategy, { Blaster } from "./Weapons";
 import Projectile from "./Projectile";
+import degreesToRadians from "../util/degreesToRadians";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 enum Direction {
@@ -100,11 +101,11 @@ export default class Player extends GameObject {
                 break;
 
             case Action.AimLeft:
-                this.rotateAim(1);
+                this.rotateAim(-1);
                 break;
 
             case Action.AimRight:
-                this.rotateAim(10);
+                this.rotateAim(1);
                 break;
 
             case Action.Fire:
@@ -117,9 +118,10 @@ export default class Player extends GameObject {
         this.aimAngle = this.aimAngle + angle;
         this.aimVector = Vector.rotateAbout(
             this.aimVector,
-            this.aimAngle,
+            degreesToRadians(this.aimAngle),
             this.body.position
         );
+        console.log(this.aimAngle, this.aimVector);
     }
 
     private handleWallCollision(e: IEventCollision<Engine>) {
@@ -128,7 +130,7 @@ export default class Player extends GameObject {
 
         switch (collision.label) {
             case "topWall":
-                console.log("TOP")
+                console.log("TOP");
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
                     y: canvas.height - (this.size - 20)
