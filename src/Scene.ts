@@ -2,15 +2,24 @@ import { Bodies, World, Body, Vector } from "matter-js";
 import Player from "./Player";
 import MatterInstance from "./MatterInstance";
 import degreesToRadians from "../util/degreesToRadians";
+import Enemy from "./Enemy";
 
 export default class Scene {
     private static instance: Scene;
     public walls: any = {};
     public player: Player;
+    private enemies: Enemy[] = [];
 
     constructor() {
         this.player = new Player();
+        this.createEnemies();
         this.createWalls();
+    }
+
+    private createEnemies() {
+        setInterval(() => {
+            this.enemies.push(new Enemy());
+        }, 1000);
     }
 
     static getInstance() {
