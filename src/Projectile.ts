@@ -1,5 +1,14 @@
 import GameObject from "./GameObject";
-import { Bodies, Vector } from "matter-js";
+import MatterInstance from "./MatterInstance";
+import {
+    Bodies,
+    Vector,
+    Events,
+    Body,
+    Engine,
+    IEventCollision,
+    Composite
+} from "matter-js";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 export default class Projectile extends GameObject {
@@ -15,5 +24,34 @@ export default class Projectile extends GameObject {
                 }
             })
         );
+
+        const { engine } = MatterInstance.getInstance();
+
+        Events.on(engine, "collisionStart", e => {
+            this.handleWallCollision(e);
+        });
+    }
+
+    private handleWallCollision(e: IEventCollision<Engine>) {
+        const { bodyA: collision, bodyB: player } = e.pairs[0];
+        const { canvas, engine } = MatterInstance.getInstance();
+
+        switch (collision.label) {
+            case "topWall":
+                Composite.remove(engine.world, this.body);
+                break;
+
+            case "bottomWall":
+                Composite.remove(engine.world, this.body);
+                break;
+
+            case "leftWall":
+                Composite.remove(engine.world, this.body);
+                break;
+
+            case "rightWall":
+                Composite.remove(engine.world, this.body);
+                break;
+        }
     }
 }

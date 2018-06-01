@@ -38,11 +38,13 @@ export default class Player extends GameObject {
         x: 0,
         y: 0
     };
-    private aimAngle: number = 0;
+    public aimAngle: number = 0;
     private size: number = 30;
+    private acceleration = 0.06;
 
     private activeWeapon: WeaponStrategy;
     private blaster: Blaster;
+    public projectiles: Projectile[] = [];
 
     constructor() {
         super();
@@ -68,8 +70,8 @@ export default class Player extends GameObject {
             this.handleWallCollision(e);
         });
 
-        this.blaster = new Blaster();
-        this.activeWeapon = this.blaster;
+        // this.blaster = new Blaster();
+        this.activeWeapon = new Blaster(this);
     }
 
     private handleControls(keyCode: number): void {
@@ -77,25 +79,25 @@ export default class Player extends GameObject {
             case Direction.Up:
                 this.move({
                     x: 0,
-                    y: -0.004
+                    y: -this.acceleration
                 });
 
                 break;
             case Direction.Down:
                 this.move({
                     x: 0,
-                    y: 0.004
+                    y: this.acceleration
                 });
                 break;
             case Direction.Left:
                 this.move({
-                    x: -0.004,
+                    x: -this.acceleration,
                     y: 0
                 });
                 break;
             case Direction.Right:
                 this.move({
-                    x: 0.004,
+                    x: this.acceleration,
                     y: 0
                 });
                 break;
@@ -127,36 +129,54 @@ export default class Player extends GameObject {
     private handleWallCollision(e: IEventCollision<Engine>) {
         const { bodyA: player, bodyB: collision } = e.pairs[0];
         const { canvas } = MatterInstance.getInstance();
+        const offset = 40;
 
         switch (collision.label) {
             case "topWall":
                 console.log("TOP");
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
-                    y: canvas.height - (this.size - 20)
+                    y: canvas.height - (this.size - offset)
                 });
                 break;
 
             case "bottomWall":
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
-                    y: this.size + 20
+                    y: this.size + offset
                 });
                 break;
 
             case "leftWall":
                 Body.setPosition(this.body, {
-                    x: canvas.width - this.size,
+                    x: canvas.width - (this.size - offset),
                     y: this.body.position.y
                 });
                 break;
 
             case "rightWall":
                 Body.setPosition(this.body, {
-                    x: this.size,
+                    x: this.size + offset,
                     y: this.body.position.y
                 });
                 break;
         }
+    }
+
+    public addProjectile(size: number) {
+        const projectile = new Projectile(
+            this.body.position.x,
+            this.body.position.y - 50,
+            size
+        );
+        Body.rotate(projectile.body, this.aimAngle);
+
+        const dir = Vector.angle(projectile.body.position, this.aimVector);
+
+        projectile.move({
+            x: Math.cos(dir) / 100,
+            y: Math.sin(dir) / 100
+        });
+        this.projectiles.push(projectile);
     }
 }
