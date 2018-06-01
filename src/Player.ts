@@ -40,7 +40,7 @@ export default class Player extends GameObject {
     };
     public aimAngle: number = 0;
     private size: number = 30;
-    private acceleration = 0.06;
+    private acceleration = 0.0035;
 
     private activeWeapon: WeaponStrategy;
     private blaster: Blaster;
@@ -70,7 +70,6 @@ export default class Player extends GameObject {
             this.handleWallCollision(e);
         });
 
-        // this.blaster = new Blaster();
         this.activeWeapon = new Blaster(this);
     }
 
@@ -136,7 +135,7 @@ export default class Player extends GameObject {
                 console.log("TOP");
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
-                    y: canvas.height - (this.size - offset)
+                    y: canvas.height - this.size - offset
                 });
                 break;
 
@@ -166,7 +165,7 @@ export default class Player extends GameObject {
     public addProjectile(size: number) {
         const projectile = new Projectile(
             this.body.position.x,
-            this.body.position.y - 50,
+            this.body.position.y,
             size
         );
         Body.rotate(projectile.body, this.aimAngle);
