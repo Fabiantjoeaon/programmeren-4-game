@@ -1,71 +1,66 @@
-import GameObject from "./GameObject";
 import {
-  Body,
-  World,
-  Bodies,
-  Vector,
-  Events,
-  IEventCollision,
-  Engine,
-  Composite
+    Body,
+    World,
+    Bodies,
+    Vector,
+    Events,
+    IEventCollision,
+    Engine,
+    Composite
 } from "matter-js";
 import MatterInstance from "./MatterInstance";
+import GameObject from "./GameObject";
+import Game from "./Game";
 import { getWidth, getHeight } from "../util/getDimensions";
 import randomInRange from "../util/randomInRange";
+import interpolate from "../util/interpolate";
 
 export default class Enemy extends GameObject {
-  private width: number = 20;
-  private height: number = 40;
-  private movementSpeed: number = 0;
+    private width: number = 20;
+    private height: number = 40;
+    private moveTimeOut: number = 1000;
+    private worth: number;
 
-  private startingPosition: Vector;
+    private startingPosition: Vector;
 
-  constructor() {
-    super();
-    const { canvas, engine } = MatterInstance.getInstance();
+    constructor(moveTimeOut: number, worth: number) {
+        super();
+        this.moveTimeOut = moveTimeOut;
+        this.worth = worth;
 
-    this.startingPosition = {
-      x: randomInRange(0, canvas.width),
-      y: this.height + 40
-    };
+        const { canvas, engine } = MatterInstance.getInstance();
 
-    this.create(
-      Bodies.rectangle(
-        this.startingPosition.x,
-        this.startingPosition.y,
-        this.width,
-        this.height,
-        {
-          render: {
-            fillStyle: "#F36062"
-          }
-        }
-      )
-    );
-  }
+        this.startingPosition = {
+            x: randomInRange(0, canvas.width),
+            y: this.height + 40
+        };
 
-  private handleWallCollision(e: IEventCollision<Engine>) {
-    const { bodyA: collision, bodyB: player } = e.pairs[0];
-    const { canvas, engine } = MatterInstance.getInstance();
+        this.create(
+            Bodies.rectangle(
+                this.startingPosition.x,
+                this.startingPosition.y,
+                this.width,
+                this.height,
+                {
+                    label: "enemy",
+                    render: {
+                        fillStyle: "#F36062"
+                    }
+                }
+            )
+        );
 
-    switch (collision.label) {
-      case "topWall":
-        Composite.remove(engine.world, this.body);
-        break;
-
-      case "bottomWall":
-        Composite.remove(engine.world, this.body);
-        break;
-
-      case "leftWall":
-        Composite.remove(engine.world, this.body);
-        break;
-
-      case "rightWall":
-        Composite.remove(engine.world, this.body);
-        break;
+        this.moveTowardsPlayer();
     }
-  }
 
-  //private moveToPlayer
+    private moveTowardsPlayer() {
+        const division = 100000;
+        setInterval(() => {
+            const next = Vector.sub(
+                Game.getInstance().scene.player.body.position,
+                this.body.position
+            );
+            this.move({ x: next.x / division, y: next.y / division });
+        }, this.moveTimeOut);
+    }
 }

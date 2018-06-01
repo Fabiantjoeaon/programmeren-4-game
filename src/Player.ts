@@ -23,22 +23,11 @@ enum Direction {
     Right = 68
 }
 
-enum Action {
-    Fire = 38,
-    AimLeft = 37,
-    AimRight = 39
-}
-
 export default class Player extends GameObject {
     private startingPosition: Vector = {
         x: getWidth() / 2,
         y: getHeight() / 2 + 150
     };
-    public aimVector: Vector = {
-        x: 0,
-        y: 0
-    };
-    public aimAngle: number = 0;
     private size: number = 30;
     private acceleration = 0.0035;
 
@@ -65,6 +54,10 @@ export default class Player extends GameObject {
 
         document.addEventListener("keydown", e => {
             this.handleControls(e.keyCode);
+        });
+        document.addEventListener("mousedown", e => {
+            const { x, y } = e;
+            this.activeWeapon.fire({ x, y });
         });
         Events.on(engine, "collisionStart", e => {
             this.handleWallCollision(e);
@@ -100,29 +93,7 @@ export default class Player extends GameObject {
                     y: 0
                 });
                 break;
-
-            case Action.AimLeft:
-                this.rotateAim(-1);
-                break;
-
-            case Action.AimRight:
-                this.rotateAim(1);
-                break;
-
-            case Action.Fire:
-                this.activeWeapon.fire();
-                break;
         }
-    }
-
-    private rotateAim(angle: number) {
-        this.aimAngle = this.aimAngle + angle;
-        this.aimVector = Vector.rotateAbout(
-            this.aimVector,
-            degreesToRadians(this.aimAngle),
-            this.body.position
-        );
-        console.log(this.aimAngle, this.aimVector);
     }
 
     private handleWallCollision(e: IEventCollision<Engine>) {
@@ -161,15 +132,14 @@ export default class Player extends GameObject {
         }
     }
 
-    public addProjectile(size: number) {
+    public addProjectile(size: number, mousePosition: Vector) {
         const projectile = new Projectile(
             this.body.position.x,
             this.body.position.y,
             size
         );
-        Body.rotate(projectile.body, this.aimAngle);
 
-        const dir = Vector.angle(projectile.body.position, this.aimVector);
+        const dir = Vector.angle(projectile.body.position, mousePosition);
 
         projectile.move({
             x: Math.cos(dir) / 100,

@@ -9,6 +9,8 @@ export default class Scene {
     public walls: any = {};
     public player: Player;
     private enemies: Enemy[] = [];
+    private enemySpawnTimeout: number = 1000;
+    private enemyCounter: number = 0;
 
     constructor() {
         this.player = new Player();
@@ -18,8 +20,9 @@ export default class Scene {
 
     private createEnemies() {
         setInterval(() => {
-            this.enemies.push(new Enemy());
-        }, 1000);
+            this.enemies.push(new Enemy(1000, 1000));
+            this.enemyCounter++;
+        }, this.enemySpawnTimeout);
     }
 
     static getInstance() {

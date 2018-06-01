@@ -9,6 +9,7 @@ import {
     IEventCollision,
     Composite
 } from "matter-js";
+import Game from "./Game";
 import { getWidth, getHeight } from "../util/getDimensions";
 
 export default class Projectile extends GameObject {
@@ -51,6 +52,11 @@ export default class Projectile extends GameObject {
 
             case "rightWall":
                 Composite.remove(engine.world, this.body);
+                break;
+
+            case "enemy":
+                // TODO: observer pattern ??
+                Composite.remove(engine.world, collision);
                 break;
         }
     }

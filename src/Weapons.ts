@@ -6,7 +6,7 @@ import GameObject from "./GameObject";
 
 export default interface WeaponStrategy {
     player: Player;
-    fire(): void;
+    fire(mousePosition: Vector): void;
 }
 
 export class Blaster implements WeaponStrategy {
@@ -17,8 +17,8 @@ export class Blaster implements WeaponStrategy {
         this.player = player;
     }
 
-    public fire(): void {
-        this.player.addProjectile(this.projectileSize);
+    public fire(mousePosition: Vector): void {
+        this.player.addProjectile(this.projectileSize, mousePosition);
     }
 }
 

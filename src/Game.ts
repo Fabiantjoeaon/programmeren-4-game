@@ -2,10 +2,11 @@ import Scene from "./Scene";
 
 export default class Game {
     private static instance: Game;
-    private scene: Scene;
+    public scene: Scene = Scene.getInstance();
+    public score: number = 0;
 
-    private constructor() {
-        this.scene = Scene.getInstance();
+    public updateScore(score: number) {
+        this.score += score;
     }
 
     static getInstance() {
