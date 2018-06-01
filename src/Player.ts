@@ -133,7 +133,6 @@ export default class Player extends GameObject {
 
         switch (collision.label) {
             case "topWall":
-                console.log("TOP");
                 Body.setPosition(this.body, {
                     x: this.body.position.x,
                     y: canvas.height - (this.size - offset)
