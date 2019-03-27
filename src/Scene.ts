@@ -2,93 +2,126 @@ import { Bodies, World, Body, Vector } from "matter-js";
 import Player from "./Player";
 import MatterInstance from "./MatterInstance";
 import degreesToRadians from "../util/degreesToRadians";
-import Enemy from "./Enemy";
+import EnemyFactory from "./Enemy/Factory";
+import EnemyCollection from "./Enemy/Collection";
+import { AdvancedEnemy } from "./Enemy/index";
 
 export default class Scene {
-    private static instance: Scene;
-    public walls: any = {};
-    public player: Player;
-    private enemies: Enemy[] = [];
-    private enemySpawnTimeout: number = 1000;
-    private enemyCounter: number = 0;
+  private static instance: Scene;
+  public walls: any = {};
+  public player: Player;
+  private enemyFactory: EnemyFactory;
+  private enemyCollection: EnemyCollection;
 
-    constructor() {
-        this.player = new Player();
-        this.createEnemies();
-        this.createWalls();
+  private enemySpawnTimeout: number = 1000;
+  private enemyFireTimeout: number = 2000;
+
+  constructor() {
+    this.player = new Player();
+    this.createWalls();
+
+    this.createEnemies();
+    this.handleEnemyInteraction();
+  }
+
+  static getInstance() {
+    if (!Scene.instance) {
+      Scene.instance = new Scene();
     }
+    return Scene.instance;
+  }
 
-    private createEnemies() {
-        setInterval(() => {
-            this.enemies.push(new Enemy(1000, 1000));
-            this.enemyCounter++;
-        }, this.enemySpawnTimeout);
-    }
+  /**
+   *
+   */
+  private createEnemies() {
+    this.enemyFactory = new EnemyFactory();
+    this.enemyCollection = new EnemyCollection();
+    setInterval(() => {
+      this.enemyCollection.add(
+        this.enemyFactory.create({ type: "PlainEnemy" })
+      );
+      this.enemyCollection.add(
+        this.enemyFactory.create({ type: "AdvancedEnemy" })
+      );
+      //   this.enemyCounter++;
+    }, this.enemySpawnTimeout);
+  }
 
-    static getInstance() {
-        if (!Scene.instance) {
-            Scene.instance = new Scene();
+  /**
+   *
+   */
+  private handleEnemyInteraction() {
+    setTimeout(() => {
+      setInterval(() => {
+        const iterator = this.enemyCollection.getIterator();
+        while (iterator.isValid()) {
+          const enemy = iterator.next();
+          if (enemy instanceof AdvancedEnemy) {
+            enemy.blaster.fire({
+              x: this.player.body.position.x,
+              y: this.player.body.position.y
+            });
+          }
         }
-        return Scene.instance;
-    }
+      }, this.enemyFireTimeout);
+    }, 1000);
+  }
 
-    private createWalls(): void {
-        const { canvas, engine } = MatterInstance.getInstance();
-        this.walls.left = Bodies.rectangle(0, 0, 1, canvas.height * 2, {
-            label: "leftWall",
-            isStatic: true,
-            isSensor: true,
-            render: {
-                visible: false,
-                fillStyle: "#fff"
-            }
-        });
-        World.add(engine.world, this.walls.left);
+  /**
+   *
+   */
+  private createWalls(): void {
+    const { canvas, engine } = MatterInstance.getInstance();
+    this.walls.left = Bodies.rectangle(0, 0, 1, canvas.height * 2, {
+      label: "leftWall",
+      isStatic: true,
+      isSensor: true,
+      render: {
+        visible: false,
+        fillStyle: "#fff"
+      }
+    });
+    World.add(engine.world, this.walls.left);
 
-        this.walls.right = Bodies.rectangle(
-            canvas.width,
-            0,
-            1,
-            canvas.height * 2,
-            {
-                label: "rightWall",
-                isStatic: true,
-                isSensor: true,
-                render: {
-                    visible: false,
-                    fillStyle: "#fff"
-                }
-            }
-        );
-        World.add(engine.world, this.walls.right);
+    this.walls.right = Bodies.rectangle(canvas.width, 0, 1, canvas.height * 2, {
+      label: "rightWall",
+      isStatic: true,
+      isSensor: true,
+      render: {
+        visible: false,
+        fillStyle: "#fff"
+      }
+    });
+    World.add(engine.world, this.walls.right);
 
-        this.walls.top = Bodies.rectangle(0, 0, canvas.width * 2, 1, {
-            label: "topWall",
-            isStatic: true,
-            isSensor: true,
-            render: {
-                visible: false,
-                fillStyle: "#fff"
-            }
-        });
-        World.add(engine.world, this.walls.top);
+    this.walls.top = Bodies.rectangle(0, 0, canvas.width * 2, 1, {
+      label: "topWall",
+      isStatic: true,
+      isSensor: true,
+      render: {
+        visible: false,
+        fillStyle: "#fff"
+      }
+    });
+    World.add(engine.world, this.walls.top);
 
-        this.walls.bottom = Bodies.rectangle(
-            0,
-            canvas.height,
-            canvas.width * 2,
-            1,
-            {
-                label: "bottomWall",
-                isStatic: true,
-                isSensor: true,
-                render: {
-                    visible: false,
-                    fillStyle: "#fff"
-                }
-            }
-        );
+    this.walls.bottom = Bodies.rectangle(
+      0,
+      canvas.height,
+      canvas.width * 2,
+      1,
+      {
+        label: "bottomWall",
+        isStatic: true,
+        isSensor: true,
+        render: {
+          visible: false,
+          fillStyle: "#fff"
+        }
+      }
+    );
 
-        World.add(engine.world, this.walls.bottom);
-    }
+    World.add(engine.world, this.walls.bottom);
+  }
 }

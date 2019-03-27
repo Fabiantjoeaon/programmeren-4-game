@@ -1,4 +1,4 @@
-import { Vector, Body, World } from "matter-js";
+import { Vector, Body, World, IEventCollision, Engine } from "matter-js";
 import MatterInstance from "./MatterInstance";
 
 export default class GameObject {
@@ -16,4 +16,6 @@ export default class GameObject {
     public move(force: Vector) {
         Body.applyForce(this.body, this.body.position, force);
     }
+
+    protected handleCollision(e: IEventCollision<Engine>) {}
 }

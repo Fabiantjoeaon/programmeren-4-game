@@ -1,29 +1,62 @@
 import { Body, Bodies, Vector, World, Composite } from "matter-js";
 import Scene from "./Scene";
-import Player from "./Player";
+
 import MatterInstance from "./MatterInstance";
 import GameObject from "./GameObject";
 
+import Player from "./Player";
+import { AdvancedEnemy } from "./Enemy/index";
+
+type Holder = Player | AdvancedEnemy;
 export default interface WeaponStrategy {
-    player: Player;
-    fire(mousePosition: Vector): void;
+  holder: Holder;
+  fire(mousePosition: Vector): void;
 }
 
 export class Blaster implements WeaponStrategy {
-    public player: Player;
-    private projectileSize: number = 20;
+  public holder: Holder;
+  private projectileSize: number = 20;
 
-    constructor(player: Player) {
-        this.player = player;
-    }
+  constructor(holder: Holder) {
+    this.holder = holder;
+  }
 
-    public fire(mousePosition: Vector): void {
-        this.player.addProjectile(this.projectileSize, mousePosition);
-    }
+  public fire(mousePosition: Vector): void {
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+  }
 }
 
-// export class OtherWeapon implements WeaponStrategy {
-//     constructor() {}
+export class TripleBlaster implements WeaponStrategy {
+  public holder: Holder;
+  private projectileSize: number = 40;
 
-//     public fire(): void {}
-// }
+  constructor(holder: Holder) {
+    this.holder = holder;
+  }
+
+  public fire(mousePosition: Vector): void {
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+  }
+}
+
+export class Nuker implements WeaponStrategy {
+  public holder: Holder;
+  private projectileSize: number = 100;
+
+  constructor(holder: Holder) {
+    this.holder = holder;
+  }
+
+  public fire(mousePosition: Vector): void {
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+    this.holder.addProjectile(this.projectileSize, mousePosition);
+  }
+}
