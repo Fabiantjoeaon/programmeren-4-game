@@ -6,9 +6,40 @@ import { Blaster } from "../Weapons";
 import randomInRange from "../../util/randomInRange";
 import Projectile from "../Projectile";
 
+export class AdvancedEnemyDecorator {
+  private enemy;
+
+  public blaster: Blaster;
+
+  public projectiles: Projectile[] = [];
+  public type = "advanced";
+
+  constructor(enemy) {
+    this.enemy = enemy;
+    this.blaster = new Blaster(this);
+  }
+
+  public addProjectile(size: number, playerPosition: Vector) {
+    const projectile = new Projectile(
+      this.enemy.body.position.x,
+      this.enemy.body.position.y,
+      size
+    );
+
+    const dir = Vector.angle(projectile.body.position, playerPosition);
+
+    projectile.move({
+      x: Math.cos(dir) / 100,
+      y: Math.sin(dir) / 100
+    });
+    this.projectiles.push(projectile);
+  }
+}
+
 export class PlainEnemy extends GameObject {
   private width: number = 20;
   private height: number = 40;
+  private type = "plain";
   private moveTimeOut: number = 1000;
   private worth: number = 400;
 
@@ -60,10 +91,6 @@ export class AdvancedEnemy extends GameObject {
   private moveTimeOut: number = 800;
   private worth: number = 400;
 
-  public blaster: Blaster;
-
-  public projectiles: Projectile[] = [];
-
   private startingPosition: Vector;
 
   constructor(enemyOptions) {
@@ -92,7 +119,6 @@ export class AdvancedEnemy extends GameObject {
     );
 
     this.moveTowardsPlayer();
-    this.blaster = new Blaster(this);
   }
 
   private moveTowardsPlayer() {
@@ -104,21 +130,5 @@ export class AdvancedEnemy extends GameObject {
       );
       this.move({ x: next.x / division, y: next.y / division });
     }, this.moveTimeOut);
-  }
-
-  public addProjectile(size: number, playerPosition: Vector) {
-    const projectile = new Projectile(
-      this.body.position.x,
-      this.body.position.y,
-      size
-    );
-
-    const dir = Vector.angle(projectile.body.position, playerPosition);
-
-    projectile.move({
-      x: Math.cos(dir) / 100,
-      y: Math.sin(dir) / 100
-    });
-    this.projectiles.push(projectile);
   }
 }

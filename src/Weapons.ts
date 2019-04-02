@@ -5,9 +5,9 @@ import MatterInstance from "./MatterInstance";
 import GameObject from "./GameObject";
 
 import Player from "./Player";
-import { AdvancedEnemy } from "./Enemy/index";
+import { AdvancedEnemyDecorator } from "./Enemy/index";
 
-type Holder = Player | AdvancedEnemy;
+type Holder = Player | AdvancedEnemyDecorator;
 export default interface WeaponStrategy {
   holder: Holder;
   fire(mousePosition: Vector): void;

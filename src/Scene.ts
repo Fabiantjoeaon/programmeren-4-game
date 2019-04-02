@@ -57,7 +57,8 @@ export default class Scene {
         const iterator = this.enemyCollection.getIterator();
         while (iterator.isValid()) {
           const enemy = iterator.next();
-          if (enemy instanceof AdvancedEnemy) {
+          console.log(enemy.type);
+          if (enemy.type === "advanced") {
             enemy.blaster.fire({
               x: this.player.body.position.x,
               y: this.player.body.position.y
